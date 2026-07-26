@@ -7,13 +7,20 @@ import (
 	"sync"
 
 	"github.com/joho/godotenv"
+	echoSwagger "github.com/swaggo/echo-swagger"
 	"github.com/tubagusmf/ivlolitas-be/db"
 	"github.com/tubagusmf/ivlolitas-be/internal/config"
+	"github.com/tubagusmf/ivlolitas-be/internal/repository"
+	"github.com/tubagusmf/ivlolitas-be/internal/usecase"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+
+	handlerHttp "github.com/tubagusmf/ivlolitas-be/internal/delivery/http"
+	appValidator "github.com/tubagusmf/ivlolitas-be/internal/helper"
+	jwtService "github.com/tubagusmf/ivlolitas-be/internal/jwt"
 )
 
 func init() {
@@ -42,13 +49,40 @@ func httpServer(cmd *cobra.Command, args []string) {
 	}
 	defer sqlDB.Close()
 
+	if err := sqlDB.Ping(); err != nil {
+		log.Fatalf("Failed to ping database: %v", err)
+	}
+
+	userRepo := repository.NewUserRepository(postgresDB)
+	roleRepo := repository.NewRoleRepository(postgresDB)
+	refreshTokenRepo := repository.NewRefreshTokenRepository(postgresDB)
+
+	jwt := jwtService.New(os.Getenv("JWT_SECRET"))
+
+	userUsecase := usecase.NewUserUsecase(userRepo)
+	authUsecase := usecase.NewAuthUsecase(userRepo, refreshTokenRepo, jwt)
+	roleUsecase := usecase.NewRoleUsecase(roleRepo)
+
+	authMiddleware := handlerHttp.NewAuthMiddleware(jwt)
+
 	e := echo.New()
 
+	e.Validator = appValidator.New()
+
+	handlerHttp.NewUserHandler(e, userUsecase, authMiddleware)
+	handlerHttp.NewAuthHandler(e, authUsecase, authMiddleware)
+	handlerHttp.NewroleHandler(e, roleUsecase, authMiddleware)
+
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"http://localhost:5173", "http://localhost:3001"},
 		AllowMethods: []string{echo.GET, echo.POST, echo.PUT, echo.DELETE},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
 	}))
+
+	// Swagger UI
+	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	var wg sync.WaitGroup
 	errCh := make(chan error, 2)
