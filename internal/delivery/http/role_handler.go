@@ -11,12 +11,12 @@ import (
 )
 
 type roleHandler struct {
-	repoUsecase usecase.IRoleUsecase
+	roleUsecase usecase.IRoleUsecase
 }
 
 func NewroleHandler(e *echo.Echo, uc usecase.IRoleUsecase, auth *AuthMiddleware) {
 	handler := &roleHandler{
-		repoUsecase: uc,
+		roleUsecase: uc,
 	}
 
 	group := e.Group("/v1/roles")
@@ -52,7 +52,7 @@ func (h *roleHandler) CreateRole(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	repo, err := h.repoUsecase.CreateRole(
+	role, err := h.roleUsecase.CreateRole(
 		c.Request().Context(),
 		&body,
 	)
@@ -61,8 +61,8 @@ func (h *roleHandler) CreateRole(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusCreated, map[string]interface{}{
-		"message": "repo created successfully",
-		"data":    repo,
+		"message": "data created successfully",
+		"data":    role,
 	})
 }
 
@@ -77,7 +77,7 @@ func (h *roleHandler) CreateRole(c echo.Context) error {
 //	@Failure		500		{object}	map[string]interface{}
 //	@Router			/roles [get]
 func (h *roleHandler) GetRoles(c echo.Context) error {
-	roles, err := h.repoUsecase.GetRoles(
+	roles, err := h.roleUsecase.GetRoles(
 		c.Request().Context(),
 	)
 	if err != nil {
@@ -85,7 +85,7 @@ func (h *roleHandler) GetRoles(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
-		"message": "roles fetched successfully",
+		"message": "data fetched successfully",
 		"data":    roles,
 	})
 }
@@ -105,10 +105,10 @@ func (h *roleHandler) GetRoles(c echo.Context) error {
 func (h *roleHandler) GetRoleByID(c echo.Context) error {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, "invalid repo id")
+		return c.JSON(http.StatusBadRequest, "invalid role id")
 	}
 
-	repo, err := h.repoUsecase.GetRoleByID(
+	role, err := h.roleUsecase.GetRoleByID(
 		c.Request().Context(),
 		id,
 	)
@@ -117,8 +117,8 @@ func (h *roleHandler) GetRoleByID(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
-		"message": "repo fetched successfully",
-		"data":    repo,
+		"message": "data fetched successfully",
+		"data":    role,
 	})
 }
 
@@ -138,7 +138,7 @@ func (h *roleHandler) GetRoleByID(c echo.Context) error {
 func (h *roleHandler) UpdateRole(c echo.Context) error {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, "invalid repo id")
+		return c.JSON(http.StatusBadRequest, "invalid role id")
 	}
 
 	var body model.UpdateRoleInput
@@ -147,7 +147,7 @@ func (h *roleHandler) UpdateRole(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, "invalid request body")
 	}
 
-	repo, err := h.repoUsecase.UpdateRole(
+	role, err := h.roleUsecase.UpdateRole(
 		c.Request().Context(),
 		id,
 		&body,
@@ -157,8 +157,8 @@ func (h *roleHandler) UpdateRole(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
-		"message": "repo updated successfully",
-		"data":    repo,
+		"message": "data updated successfully",
+		"data":    role,
 	})
 }
 
@@ -177,10 +177,10 @@ func (h *roleHandler) UpdateRole(c echo.Context) error {
 func (h *roleHandler) DeleteRole(c echo.Context) error {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, "invalid repo id")
+		return c.JSON(http.StatusBadRequest, "invalid role id")
 	}
 
-	if err := h.repoUsecase.DeleteRole(
+	if err := h.roleUsecase.DeleteRole(
 		c.Request().Context(),
 		id,
 	); err != nil {
@@ -188,6 +188,6 @@ func (h *roleHandler) DeleteRole(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
-		"message": "repo deleted successfully",
+		"message": "data deleted successfully",
 	})
 }
