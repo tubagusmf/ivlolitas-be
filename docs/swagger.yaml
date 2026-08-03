@@ -88,6 +88,100 @@ definitions:
     required:
     - refresh_token
     type: object
+  model.Product:
+    properties:
+      category_id:
+        type: integer
+      created_at:
+        type: string
+      created_by:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      images:
+        items:
+          $ref: '#/definitions/model.ProductImage'
+        type: array
+      is_active:
+        type: boolean
+      name:
+        type: string
+      price:
+        type: number
+      short_desc:
+        type: string
+      sku:
+        type: string
+      slug:
+        type: string
+      stock:
+        type: integer
+      updated_at:
+        type: string
+      updated_by:
+        type: string
+      weight:
+        type: number
+    type: object
+  model.ProductImage:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      image_public_id:
+        type: string
+      image_url:
+        type: string
+      is_primary:
+        type: boolean
+      product_id:
+        type: string
+      sort_order:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  model.ProductInput:
+    properties:
+      category_id:
+        type: integer
+      created_by:
+        type: string
+      description:
+        type: string
+      is_active:
+        type: boolean
+      name:
+        maxLength: 150
+        type: string
+      price:
+        type: number
+      short_desc:
+        type: string
+      sku:
+        type: string
+      slug:
+        maxLength: 150
+        type: string
+      stock:
+        minimum: 0
+        type: integer
+      updated_by:
+        type: string
+      weight:
+        minimum: 0
+        type: number
+    required:
+    - category_id
+    - name
+    - price
+    - sku
+    - slug
+    - stock
+    type: object
   model.RefreshTokenRequest:
     properties:
       refresh_token:
@@ -429,6 +523,205 @@ paths:
       summary: Update Category
       tags:
       - Categories
+  /products:
+    get:
+      consumes:
+      - application/json
+      description: Get all products
+      parameters:
+      - description: Search by name or sku
+        in: query
+        name: search
+        type: string
+      - description: Filter by is_active
+        in: query
+        name: is_active
+        type: boolean
+      - description: Sort by created_at or updated_at
+        in: query
+        name: sort
+        type: string
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Product'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get all products
+      tags:
+      - Products
+    post:
+      consumes:
+      - application/json
+      description: Create a new product
+      parameters:
+      - description: Product input
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.ProductInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Product'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create a new product
+      tags:
+      - Products
+  /products/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a product by ID
+      parameters:
+      - description: Product UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Product'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Delete a product by ID
+      tags:
+      - Products
+    get:
+      consumes:
+      - application/json
+      description: Get a product by ID
+      parameters:
+      - description: Product UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Product'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get a product by ID
+      tags:
+      - Products
+    put:
+      consumes:
+      - application/json
+      description: Update a product by ID
+      parameters:
+      - description: Product UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Product input
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.ProductInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Product'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update a product by ID
+      tags:
+      - Products
   /roles:
     get:
       description: Get all roles
