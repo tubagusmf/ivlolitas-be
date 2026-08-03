@@ -56,12 +56,14 @@ func httpServer(cmd *cobra.Command, args []string) {
 	userRepo := repository.NewUserRepository(postgresDB)
 	roleRepo := repository.NewRoleRepository(postgresDB)
 	refreshTokenRepo := repository.NewRefreshTokenRepository(postgresDB)
+	categoryRepo := repository.NewCategoryRepository(postgresDB)
 
 	jwt := jwtService.New(os.Getenv("JWT_SECRET"))
 
 	userUsecase := usecase.NewUserUsecase(userRepo)
 	authUsecase := usecase.NewAuthUsecase(userRepo, refreshTokenRepo, jwt)
 	roleUsecase := usecase.NewRoleUsecase(roleRepo)
+	categoryUsecase := usecase.NewCategoryUsecase(categoryRepo)
 
 	authMiddleware := handlerHttp.NewAuthMiddleware(jwt)
 
@@ -72,6 +74,7 @@ func httpServer(cmd *cobra.Command, args []string) {
 	handlerHttp.NewUserHandler(e, userUsecase, authMiddleware)
 	handlerHttp.NewAuthHandler(e, authUsecase, authMiddleware)
 	handlerHttp.NewroleHandler(e, roleUsecase, authMiddleware)
+	handlerHttp.NewCategoryHandler(e, categoryUsecase, authMiddleware)
 
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())

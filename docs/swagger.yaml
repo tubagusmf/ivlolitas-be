@@ -1,5 +1,41 @@
 basePath: /v1
 definitions:
+  model.CategoryInput:
+    properties:
+      description:
+        type: string
+      image_url:
+        type: string
+      is_active:
+        type: boolean
+      name:
+        maxLength: 150
+        type: string
+      slug:
+        maxLength: 150
+        type: string
+    required:
+    - name
+    - slug
+    type: object
+  model.CategoryUpdateInput:
+    properties:
+      description:
+        type: string
+      image_url:
+        type: string
+      is_active:
+        type: boolean
+      name:
+        maxLength: 150
+        type: string
+      slug:
+        maxLength: 150
+        type: string
+    required:
+    - name
+    - slug
+    type: object
   model.CreateRoleInput:
     properties:
       description:
@@ -225,6 +261,174 @@ paths:
       summary: Refresh Access Token
       tags:
       - Authentication
+  /categories:
+    get:
+      consumes:
+      - application/json
+      description: Get all categories
+      parameters:
+      - description: Search Category
+        in: query
+        name: search
+        type: string
+      - description: Sort field (name,-name,created_at,-created_at)
+        in: query
+        name: sort
+        type: string
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Page size
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get Categories
+      tags:
+      - Categories
+    post:
+      consumes:
+      - application/json
+      description: Create new category
+      parameters:
+      - description: Category
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.CategoryInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create Category
+      tags:
+      - Categories
+  /categories/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete category by ID
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Delete Category
+      tags:
+      - Categories
+    get:
+      consumes:
+      - application/json
+      description: Get category detail
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get Category By ID
+      tags:
+      - Categories
+    put:
+      consumes:
+      - application/json
+      description: Update category by ID
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Category
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.CategoryUpdateInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update Category
+      tags:
+      - Categories
   /roles:
     get:
       description: Get all roles
