@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"github.com/tubagusmf/ivlolitas-be/internal/model"
 	"github.com/tubagusmf/ivlolitas-be/internal/repository"
@@ -90,18 +91,19 @@ func (p *productUsecase) CreateProduct(ctx context.Context, in *model.ProductInp
 	}
 
 	product := &model.Product{
-		CategoryID:  in.CategoryID,
-		SKU:         in.SKU,
-		Name:        in.Name,
-		Slug:        in.Slug,
-		ShortDesc:   &in.ShortDesc,
-		Description: &in.Description,
-		Price:       in.Price,
-		Weight:      in.Weight,
-		Stock:       in.Stock,
-		IsActive:    in.IsActive,
-		CreatedBy:   claims.UserID,
-		UpdatedBy:   claims.UserID,
+		ID:               uuid.New().String(),
+		CategoryID:       in.CategoryID,
+		SKU:              in.SKU,
+		Name:             in.Name,
+		Slug:             in.Slug,
+		ShortDescription: &in.ShortDescription,
+		Description:      &in.Description,
+		Price:            in.Price,
+		Weight:           in.Weight,
+		Stock:            in.Stock,
+		IsActive:         in.IsActive,
+		CreatedBy:        claims.UserID,
+		UpdatedBy:        claims.UserID,
 	}
 
 	result, err := p.repo.CreateProduct(ctx, product)
@@ -173,7 +175,7 @@ func (p *productUsecase) UpdateProduct(ctx context.Context, id string, in *model
 	product.SKU = in.SKU
 	product.Name = in.Name
 	product.Slug = in.Slug
-	product.ShortDesc = &in.ShortDesc
+	product.ShortDescription = &in.ShortDescription
 	product.Description = &in.Description
 	product.Price = in.Price
 	product.Weight = in.Weight

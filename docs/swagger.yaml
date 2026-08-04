@@ -148,8 +148,6 @@ definitions:
     properties:
       category_id:
         type: integer
-      created_by:
-        type: string
       description:
         type: string
       is_active:
@@ -169,8 +167,6 @@ definitions:
       stock:
         minimum: 0
         type: integer
-      updated_by:
-        type: string
       weight:
         minimum: 0
         type: number

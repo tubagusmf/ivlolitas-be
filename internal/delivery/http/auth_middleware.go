@@ -1,6 +1,7 @@
 package http
 
 import (
+	"context"
 	"net/http"
 	"strings"
 
@@ -51,12 +52,17 @@ func (m *AuthMiddleware) JWT(next echo.HandlerFunc) echo.HandlerFunc {
 			)
 		}
 
-		c.Set(string(model.BearerAuthKey), &model.Auth{
-			UserID:   claims.UserID,
-			RoleID:   claims.RoleID,
-			Email:    claims.Email,
-			FullName: claims.FullName,
-		})
+		ctx := c.Request().Context()
+
+		ctx = context.WithValue(
+			ctx,
+			model.BearerAuthKey,
+			claims,
+		)
+
+		c.SetRequest(
+			c.Request().WithContext(ctx),
+		)
 
 		return next(c)
 	}

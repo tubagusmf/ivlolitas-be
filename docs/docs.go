@@ -1457,9 +1457,6 @@ const docTemplate = `{
                 "category_id": {
                     "type": "integer"
                 },
-                "created_by": {
-                    "type": "string"
-                },
                 "description": {
                     "type": "string"
                 },
@@ -1486,9 +1483,6 @@ const docTemplate = `{
                 "stock": {
                     "type": "integer",
                     "minimum": 0
-                },
-                "updated_by": {
-                    "type": "string"
                 },
                 "weight": {
                     "type": "number",
