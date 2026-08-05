@@ -11,6 +11,7 @@ import (
 	"github.com/tubagusmf/ivlolitas-be/db"
 	"github.com/tubagusmf/ivlolitas-be/internal/config"
 	"github.com/tubagusmf/ivlolitas-be/internal/repository"
+	"github.com/tubagusmf/ivlolitas-be/internal/storage"
 	"github.com/tubagusmf/ivlolitas-be/internal/usecase"
 
 	"github.com/labstack/echo/v4"
@@ -53,11 +54,21 @@ func httpServer(cmd *cobra.Command, args []string) {
 		log.Fatalf("Failed to ping database: %v", err)
 	}
 
+	cloudStorage, err := storage.NewCloudinaryStorage(
+		config.CloudinaryCloudName(),
+		config.CloudinaryAPIKey(),
+		config.CloudinaryAPISecret(),
+	)
+	if err != nil {
+		log.Fatalf("failed to initialize Cloudinary: %v", err)
+	}
+
 	userRepo := repository.NewUserRepository(postgresDB)
 	roleRepo := repository.NewRoleRepository(postgresDB)
 	refreshTokenRepo := repository.NewRefreshTokenRepository(postgresDB)
 	categoryRepo := repository.NewCategoryRepository(postgresDB)
 	productRepo := repository.NewProductRepository(postgresDB)
+	productImageRepo := repository.NewProductImageRepository(postgresDB)
 
 	jwt := jwtService.New(os.Getenv("JWT_SECRET"))
 
@@ -66,6 +77,7 @@ func httpServer(cmd *cobra.Command, args []string) {
 	roleUsecase := usecase.NewRoleUsecase(roleRepo)
 	categoryUsecase := usecase.NewCategoryUsecase(categoryRepo)
 	productUsecase := usecase.NewProductUsecase(productRepo, categoryRepo)
+	productImageUsecase := usecase.NewProductImageUsecase(productRepo, productImageRepo, cloudStorage)
 
 	authMiddleware := handlerHttp.NewAuthMiddleware(jwt)
 
@@ -78,6 +90,7 @@ func httpServer(cmd *cobra.Command, args []string) {
 	handlerHttp.NewroleHandler(e, roleUsecase, authMiddleware)
 	handlerHttp.NewCategoryHandler(e, categoryUsecase, authMiddleware)
 	handlerHttp.NewProductHandler(e, productUsecase, authMiddleware)
+	handlerHttp.NewProductImageHandler(e, productImageUsecase, authMiddleware)
 
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())

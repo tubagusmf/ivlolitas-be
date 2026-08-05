@@ -50,6 +50,7 @@ func (r *ProductRepository) GetProducts(ctx context.Context, filter *model.Produ
 	err := db.
 		Offset((filter.Page - 1) * filter.Limit).
 		Limit(filter.Limit).
+		Preload("ProductImages").
 		Find(&products).Error
 
 	if err != nil {
@@ -64,7 +65,7 @@ func (r *ProductRepository) GetProductByID(ctx context.Context, id string) (*mod
 
 	db := r.db.WithContext(ctx)
 
-	if err := db.Where("id = ?", id).First(&product).Error; err != nil {
+	if err := db.Where("id = ?", id).First(&product).Preload("ProductImages").Error; err != nil {
 		return nil, err
 	}
 
