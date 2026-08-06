@@ -18,7 +18,7 @@ type Product struct {
 	Weight           float64        `json:"weight"`
 	Stock            int64          `json:"stock"`
 	IsActive         bool           `json:"is_active"`
-	Images           []ProductImage `json:"images,omitempty"`
+	ProductImages    []ProductImage `json:"images,omitempty"`
 	CreatedBy        string         `json:"created_by"`
 	UpdatedBy        string         `json:"updated_by"`
 	CreatedAt        time.Time      `json:"created_at"`
