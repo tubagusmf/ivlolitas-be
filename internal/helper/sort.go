@@ -26,3 +26,18 @@ func BuildProductSort(sort string) string {
 		return "created_at DESC"
 	}
 }
+
+func BuildCategorySort(sort string) string {
+	switch sort {
+	case "name":
+		return "name ASC"
+	case "-name":
+		return "name DESC"
+	case "created_at":
+		return "created_at ASC"
+	case "-created_at":
+		return "created_at DESC"
+	default:
+		return "created_at DESC"
+	}
+}

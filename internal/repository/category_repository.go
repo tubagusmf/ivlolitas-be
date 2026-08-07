@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 
+	"github.com/tubagusmf/ivlolitas-be/internal/helper"
 	"github.com/tubagusmf/ivlolitas-be/internal/model"
 	"gorm.io/gorm"
 )
@@ -38,7 +39,7 @@ func (r *CategoryRepository) GetCategories(ctx context.Context, filter *model.Ca
 	}
 
 	if filter.Sort != "" {
-		db = db.Order(buildCategorySort(filter.Sort))
+		db = db.Order(helper.BuildCategorySort(filter.Sort))
 	} else {
 		db = db.Order("created_at DESC")
 	}
@@ -102,19 +103,4 @@ func (r *CategoryRepository) UpdateCategory(ctx context.Context, category *model
 func (r *CategoryRepository) DeleteCategory(ctx context.Context, id int64) error {
 	category := &model.Category{ID: id}
 	return r.db.WithContext(ctx).Delete(category).Error
-}
-
-func buildCategorySort(sort string) string {
-	switch sort {
-	case "name":
-		return "name ASC"
-	case "-name":
-		return "name DESC"
-	case "created_at":
-		return "created_at ASC"
-	case "-created_at":
-		return "created_at DESC"
-	default:
-		return "created_at DESC"
-	}
 }
