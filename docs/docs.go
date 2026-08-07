@@ -1648,29 +1648,17 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
-                "price": {
-                    "type": "number"
-                },
                 "short_desc": {
-                    "type": "string"
-                },
-                "sku": {
                     "type": "string"
                 },
                 "slug": {
                     "type": "string"
-                },
-                "stock": {
-                    "type": "integer"
                 },
                 "updated_at": {
                     "type": "string"
                 },
                 "updated_by": {
                     "type": "string"
-                },
-                "weight": {
-                    "type": "number"
                 }
             }
         },
@@ -1708,10 +1696,7 @@ const docTemplate = `{
             "required": [
                 "category_id",
                 "name",
-                "price",
-                "sku",
-                "slug",
-                "stock"
+                "slug"
             ],
             "properties": {
                 "category_id": {
@@ -1727,26 +1712,12 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 150
                 },
-                "price": {
-                    "type": "number"
-                },
                 "short_desc": {
-                    "type": "string"
-                },
-                "sku": {
                     "type": "string"
                 },
                 "slug": {
                     "type": "string",
                     "maxLength": 150
-                },
-                "stock": {
-                    "type": "integer",
-                    "minimum": 0
-                },
-                "weight": {
-                    "type": "number",
-                    "minimum": 0
                 }
             }
         },

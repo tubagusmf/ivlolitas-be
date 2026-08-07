@@ -108,22 +108,14 @@ definitions:
         type: boolean
       name:
         type: string
-      price:
-        type: number
       short_desc:
-        type: string
-      sku:
         type: string
       slug:
         type: string
-      stock:
-        type: integer
       updated_at:
         type: string
       updated_by:
         type: string
-      weight:
-        type: number
     type: object
   model.ProductImage:
     properties:
@@ -155,28 +147,15 @@ definitions:
       name:
         maxLength: 150
         type: string
-      price:
-        type: number
       short_desc:
-        type: string
-      sku:
         type: string
       slug:
         maxLength: 150
         type: string
-      stock:
-        minimum: 0
-        type: integer
-      weight:
-        minimum: 0
-        type: number
     required:
     - category_id
     - name
-    - price
-    - sku
     - slug
-    - stock
     type: object
   model.RefreshTokenRequest:
     properties:

@@ -75,16 +75,6 @@ func (p *productUsecase) CreateProduct(ctx context.Context, in *model.ProductInp
 		return nil, err
 	}
 
-	_, err = p.repo.GetProductBySKU(ctx, in.SKU)
-
-	if err == nil {
-		log.Warn("Product SKU already exists")
-		return nil, errors.New("product SKU already exists")
-	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
-		log.WithError(err).Error("Failed to check product SKU")
-		return nil, err
-	}
-
 	claims, ok := ctx.Value(model.BearerAuthKey).(*model.CustomClaims)
 	if !ok {
 		return nil, errors.New("unauthorized")
@@ -93,14 +83,10 @@ func (p *productUsecase) CreateProduct(ctx context.Context, in *model.ProductInp
 	product := &model.Product{
 		ID:               uuid.New().String(),
 		CategoryID:       in.CategoryID,
-		SKU:              in.SKU,
 		Name:             in.Name,
 		Slug:             in.Slug,
 		ShortDescription: &in.ShortDescription,
 		Description:      &in.Description,
-		Price:            in.Price,
-		Weight:           in.Weight,
-		Stock:            in.Stock,
 		IsActive:         in.IsActive,
 		CreatedBy:        claims.UserID,
 		UpdatedBy:        claims.UserID,
@@ -151,35 +137,16 @@ func (p *productUsecase) UpdateProduct(ctx context.Context, id string, in *model
 		}
 	}
 
-	if product.SKU != in.SKU {
-
-		existing, err := p.repo.GetProductBySKU(ctx, in.SKU)
-
-		if err == nil && existing.ID != product.ID {
-			log.Warn("Product SKU already exists")
-			return nil, errors.New("product SKU already exists")
-		}
-
-		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-			log.WithError(err).Error("Failed to check product SKU")
-			return nil, err
-		}
-	}
-
 	claims, ok := ctx.Value(model.BearerAuthKey).(*model.CustomClaims)
 	if !ok {
 		return nil, errors.New("unauthorized")
 	}
 
 	product.CategoryID = in.CategoryID
-	product.SKU = in.SKU
 	product.Name = in.Name
 	product.Slug = in.Slug
 	product.ShortDescription = &in.ShortDescription
 	product.Description = &in.Description
-	product.Price = in.Price
-	product.Weight = in.Weight
-	product.Stock = in.Stock
 	product.IsActive = in.IsActive
 	product.UpdatedBy = claims.UserID
 
