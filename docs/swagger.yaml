@@ -157,6 +157,89 @@ definitions:
     - name
     - slug
     type: object
+  model.ProductVariant:
+    properties:
+      barcode:
+        type: string
+      color:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      is_active:
+        type: boolean
+      price:
+        type: number
+      product:
+        $ref: '#/definitions/model.Product'
+      product_id:
+        type: string
+      size:
+        type: string
+      sku:
+        type: string
+      updated_at:
+        type: string
+      weight:
+        type: number
+    type: object
+  model.ProductVariantInput:
+    properties:
+      barcode:
+        maxLength: 100
+        type: string
+      color:
+        maxLength: 100
+        type: string
+      is_active:
+        type: boolean
+      price:
+        type: number
+      product_id:
+        type: string
+      size:
+        maxLength: 50
+        type: string
+      sku:
+        maxLength: 50
+        type: string
+      weight:
+        minimum: 0
+        type: number
+    required:
+    - price
+    - product_id
+    - sku
+    type: object
+  model.ProductVariantUpdateInput:
+    properties:
+      barcode:
+        maxLength: 100
+        type: string
+      color:
+        maxLength: 100
+        type: string
+      is_active:
+        type: boolean
+      price:
+        type: number
+      product_id:
+        type: string
+      size:
+        maxLength: 50
+        type: string
+      sku:
+        maxLength: 50
+        type: string
+      weight:
+        minimum: 0
+        type: number
+    required:
+    - price
+    - product_id
+    - sku
+    type: object
   model.RefreshTokenRequest:
     properties:
       refresh_token:
@@ -787,6 +870,86 @@ paths:
       summary: Upload Product Images
       tags:
       - Product Images
+  /products/{productId}/variants:
+    get:
+      consumes:
+      - application/json
+      description: Get all product variants
+      parameters:
+      - description: Product UUID
+        in: path
+        name: productId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get all product variants
+      tags:
+      - Product Variants
+    post:
+      consumes:
+      - application/json
+      description: Create a new product variant
+      parameters:
+      - description: Product UUID
+        in: path
+        name: productId
+        required: true
+        type: string
+      - description: Product variant input
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.ProductVariantInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.ProductVariant'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create a new product variant
+      tags:
+      - Product Variants
   /products/images/{imageId}:
     delete:
       description: Delete product image by image id
@@ -871,6 +1034,123 @@ paths:
       summary: Set Primary Product Image
       tags:
       - Product Images
+  /products/variants/{id}:
+    delete:
+      description: Delete a product variant by ID
+      parameters:
+      - description: Product variant UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Delete a product variant by ID
+      tags:
+      - Product Variants
+    get:
+      consumes:
+      - application/json
+      description: Get a product variant by ID
+      parameters:
+      - description: Product variant UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get a product variant by ID
+      tags:
+      - Product Variants
+    put:
+      consumes:
+      - application/json
+      description: Update a product variant by ID
+      parameters:
+      - description: Product variant UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Product variant update input
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.ProductVariantUpdateInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update a product variant by ID
+      tags:
+      - Product Variants
   /roles:
     get:
       description: Get all roles
