@@ -69,6 +69,26 @@ definitions:
     - phone_number
     - role_id
     type: object
+  model.InventoryAdjustmentInput:
+    properties:
+      product_variant_id:
+        type: string
+      quantity:
+        type: integer
+    required:
+    - product_variant_id
+    - quantity
+    type: object
+  model.InventoryOperationInput:
+    properties:
+      product_variant_id:
+        type: string
+      quantity:
+        type: integer
+    required:
+    - product_variant_id
+    - quantity
+    type: object
   model.LoginInput:
     properties:
       email:
@@ -581,6 +601,364 @@ paths:
       summary: Update Category
       tags:
       - Categories
+  /inventories/{productVariantID}:
+    get:
+      consumes:
+      - application/json
+      description: Get current inventory by product variant ID
+      parameters:
+      - description: Product Variant ID
+        in: path
+        name: productVariantID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get Inventory
+      tags:
+      - Inventory
+  /inventories/{productVariantID}/transactions:
+    get:
+      consumes:
+      - application/json
+      description: Get inventory transaction history by product variant ID
+      parameters:
+      - description: Product Variant ID
+        in: path
+        name: productVariantID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get Inventory Transactions
+      tags:
+      - Inventory
+  /inventories/adjustment:
+    post:
+      consumes:
+      - application/json
+      description: Adjustment
+      parameters:
+      - description: Adjustment Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.InventoryAdjustmentInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Adjustment
+      tags:
+      - Inventory
+  /inventories/damage:
+    post:
+      consumes:
+      - application/json
+      description: Damage
+      parameters:
+      - description: Damage Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.InventoryOperationInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Damage
+      tags:
+      - Inventory
+  /inventories/release:
+    post:
+      consumes:
+      - application/json
+      description: Release
+      parameters:
+      - description: Release Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.InventoryOperationInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Release
+      tags:
+      - Inventory
+  /inventories/restock:
+    post:
+      consumes:
+      - application/json
+      description: Restock
+      parameters:
+      - description: Restock Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.InventoryOperationInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Restock
+      tags:
+      - Inventory
+  /inventories/return:
+    post:
+      consumes:
+      - application/json
+      description: Return
+      parameters:
+      - description: Return Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.InventoryOperationInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Return
+      tags:
+      - Inventory
+  /inventories/sale:
+    post:
+      consumes:
+      - application/json
+      description: Sale
+      parameters:
+      - description: Sale Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.InventoryOperationInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Sale
+      tags:
+      - Inventory
   /products:
     get:
       consumes:

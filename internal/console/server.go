@@ -70,6 +70,8 @@ func httpServer(cmd *cobra.Command, args []string) {
 	productRepo := repository.NewProductRepository(postgresDB)
 	productImageRepo := repository.NewProductImageRepository(postgresDB)
 	productVariantRepo := repository.NewProductVariantRepository(postgresDB)
+	inventoryRepo := repository.NewInventoryRepository(postgresDB)
+	inventoryTransactionRepo := repository.NewInventoryTransactionRepository(postgresDB)
 
 	jwt := jwtService.New(os.Getenv("JWT_SECRET"))
 
@@ -80,6 +82,7 @@ func httpServer(cmd *cobra.Command, args []string) {
 	productUsecase := usecase.NewProductUsecase(productRepo, categoryRepo)
 	productImageUsecase := usecase.NewProductImageUsecase(productRepo, productImageRepo, cloudStorage)
 	productVariantUsecase := usecase.NewProductVariantUsecase(productVariantRepo, productRepo)
+	inventoryUsecase := usecase.NewInventoryUsecase(inventoryRepo, inventoryTransactionRepo, postgresDB)
 
 	authMiddleware := handlerHttp.NewAuthMiddleware(jwt)
 
@@ -94,6 +97,7 @@ func httpServer(cmd *cobra.Command, args []string) {
 	handlerHttp.NewProductHandler(e, productUsecase, authMiddleware)
 	handlerHttp.NewProductImageHandler(e, productImageUsecase, authMiddleware)
 	handlerHttp.NewProductVariantHandler(e, productVariantUsecase, authMiddleware)
+	handlerHttp.NewInventoryHandler(e, inventoryUsecase, authMiddleware)
 
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
