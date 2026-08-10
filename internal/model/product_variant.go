@@ -23,23 +23,21 @@ type ProductVariant struct {
 }
 
 type ProductVariantInput struct {
-	ProductID string  `json:"product_id" validate:"required"`
-	SKU       string  `json:"sku" validate:"required,max=50"`
-	Color     *string `json:"color" validate:"max=100"`
-	Size      *string `json:"size" validate:"max=50"`
-	Price     float64 `json:"price" validate:"required,gt=0"`
-	Weight    float64 `json:"weight" validate:"gte=0"`
-	Barcode   *string `json:"barcode" validate:"max=100"`
-	IsActive  bool    `json:"is_active"`
+	SKU      string  `json:"sku" validate:"required,max=50"`
+	Color    *string `json:"color" validate:"max=100"`
+	Size     *string `json:"size" validate:"max=50"`
+	Price    float64 `json:"price" validate:"required,gt=0"`
+	Weight   float64 `json:"weight" validate:"gte=0"`
+	Barcode  *string `json:"barcode" validate:"max=100"`
+	IsActive bool    `json:"is_active"`
 }
 
 type ProductVariantUpdateInput struct {
-	ProductID string  `json:"product_id" validate:"required"`
-	SKU       string  `json:"sku" validate:"required,max=50"`
-	Color     *string `json:"color" validate:"max=100"`
-	Size      *string `json:"size" validate:"max=50"`
-	Price     float64 `json:"price" validate:"required,gt=0"`
-	Weight    float64 `json:"weight" validate:"gte=0"`
-	Barcode   *string `json:"barcode" validate:"max=100"`
-	IsActive  bool    `json:"is_active"`
+	SKU      string  `json:"sku" validate:"required,max=50"`
+	Color    *string `json:"color" validate:"max=100"`
+	Size     *string `json:"size" validate:"max=50"`
+	Price    float64 `json:"price" validate:"required,gt=0"`
+	Weight   float64 `json:"weight" validate:"gte=0"`
+	Barcode  *string `json:"barcode" validate:"max=100"`
+	IsActive bool    `json:"is_active"`
 }

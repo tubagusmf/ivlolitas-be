@@ -3,6 +3,7 @@ package http
 import (
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/tubagusmf/ivlolitas-be/internal/model"
 	"github.com/tubagusmf/ivlolitas-be/internal/usecase"
@@ -44,7 +45,7 @@ func NewProductVariantHandler(e *echo.Echo, uc usecase.IProductVariantUsecase, a
 func (h *productVariantHandler) CreateProductVariant(c echo.Context) error {
 	productID := c.Param("productId")
 
-	if productID == "" {
+	if _, err := uuid.Parse(productID); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]interface{}{
 			"message": "invalid product id",
 		})
@@ -58,8 +59,6 @@ func (h *productVariantHandler) CreateProductVariant(c echo.Context) error {
 		})
 	}
 
-	body.ProductID = productID
-
 	if err := c.Validate(&body); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]interface{}{
 			"message": err.Error(),
@@ -68,6 +67,7 @@ func (h *productVariantHandler) CreateProductVariant(c echo.Context) error {
 
 	productVariant, err := h.productVariantUsecase.Create(
 		c.Request().Context(),
+		productID,
 		&body,
 	)
 	if err != nil {
@@ -126,9 +126,11 @@ func (h *productVariantHandler) GetProductVariants(c echo.Context) error {
 // @Failure 500 {object} map[string]interface{}
 // @Router /products/variants/{id} [get]
 func (h *productVariantHandler) GetProductVariantByID(c echo.Context) error {
-	id := c.Param("id")
+	id := c.Param("variantId")
 	if id == "" {
-		return c.JSON(http.StatusBadRequest, "invalid product variant id")
+		return c.JSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "invalid product variant id",
+		})
 	}
 
 	productVariant, err := h.productVariantUsecase.GetByID(c.Request().Context(), id)
@@ -158,7 +160,7 @@ func (h *productVariantHandler) GetProductVariantByID(c echo.Context) error {
 // @Failure 500 {object} map[string]interface{}
 // @Router /products/variants/{id} [put]
 func (h *productVariantHandler) UpdateProductVariant(c echo.Context) error {
-	id := c.Param("id")
+	id := c.Param("variantId")
 
 	if id == "" {
 		return c.JSON(http.StatusBadRequest, map[string]interface{}{
@@ -211,7 +213,7 @@ func (h *productVariantHandler) UpdateProductVariant(c echo.Context) error {
 // @Failure 500 {object} map[string]interface{}
 // @Router /products/variants/{id} [delete]
 func (h *productVariantHandler) DeleteProductVariant(c echo.Context) error {
-	id := c.Param("id")
+	id := c.Param("variantId")
 
 	if id == "" {
 		return c.JSON(http.StatusBadRequest, map[string]interface{}{

@@ -216,8 +216,6 @@ definitions:
         type: boolean
       price:
         type: number
-      product_id:
-        type: string
       size:
         maxLength: 50
         type: string
@@ -229,7 +227,6 @@ definitions:
         type: number
     required:
     - price
-    - product_id
     - sku
     type: object
   model.ProductVariantUpdateInput:

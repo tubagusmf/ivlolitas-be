@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"github.com/tubagusmf/ivlolitas-be/internal/model"
 	"github.com/tubagusmf/ivlolitas-be/internal/repository"
@@ -13,7 +14,7 @@ import (
 type IProductVariantUsecase interface {
 	GetByID(ctx context.Context, id string) (*model.ProductVariant, error)
 	GetByProductID(ctx context.Context, productID string) ([]*model.ProductVariant, error)
-	Create(ctx context.Context, in *model.ProductVariantInput) (*model.ProductVariant, error)
+	Create(ctx context.Context, productID string, in *model.ProductVariantInput) (*model.ProductVariant, error)
 	Update(ctx context.Context, id string, in *model.ProductVariantUpdateInput) (*model.ProductVariant, error)
 	Delete(ctx context.Context, id string) error
 }
@@ -51,12 +52,12 @@ func (p *productVariantUsecase) GetByProductID(ctx context.Context, productID st
 	return productVariant, nil
 }
 
-func (p *productVariantUsecase) Create(ctx context.Context, in *model.ProductVariantInput) (*model.ProductVariant, error) {
+func (p *productVariantUsecase) Create(ctx context.Context, productID string, in *model.ProductVariantInput) (*model.ProductVariant, error) {
 	log := logrus.WithFields(logrus.Fields{
 		"input": in,
 	})
 
-	_, err := p.productRepo.GetProductByID(ctx, in.ProductID)
+	_, err := p.productRepo.GetProductByID(ctx, productID)
 	if err != nil {
 		log.WithError(err).Error("Product not found")
 		return nil, errors.New("product not found")
@@ -74,7 +75,8 @@ func (p *productVariantUsecase) Create(ctx context.Context, in *model.ProductVar
 	}
 
 	productVariant := &model.ProductVariant{
-		ProductID: in.ProductID,
+		ID:        uuid.New().String(),
+		ProductID: productID,
 		SKU:       in.SKU,
 		Color:     in.Color,
 		Size:      in.Size,
@@ -118,15 +120,6 @@ func (p *productVariantUsecase) Update(ctx context.Context, id string, in *model
 		}
 	}
 
-	if productVariant.ProductID != in.ProductID {
-		_, err := p.productRepo.GetProductByID(ctx, in.ProductID)
-		if err != nil {
-			log.WithError(err).Error("Product not found")
-			return nil, errors.New("product not found")
-		}
-	}
-
-	productVariant.ProductID = in.ProductID
 	productVariant.SKU = in.SKU
 	productVariant.Color = in.Color
 	productVariant.Size = in.Size

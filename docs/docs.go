@@ -2629,7 +2629,6 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "price",
-                "product_id",
                 "sku"
             ],
             "properties": {
@@ -2646,9 +2645,6 @@ const docTemplate = `{
                 },
                 "price": {
                     "type": "number"
-                },
-                "product_id": {
-                    "type": "string"
                 },
                 "size": {
                     "type": "string",
