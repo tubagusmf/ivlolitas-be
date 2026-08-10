@@ -1,12 +1,10 @@
 package http
 
 import (
-	"context"
 	"net/http"
 	"strings"
 
 	"github.com/labstack/echo/v4"
-	"github.com/tubagusmf/ivlolitas-be/internal/model"
 
 	jwt "github.com/tubagusmf/ivlolitas-be/internal/jwt"
 )
@@ -52,17 +50,10 @@ func (m *AuthMiddleware) JWT(next echo.HandlerFunc) echo.HandlerFunc {
 			)
 		}
 
-		ctx := c.Request().Context()
-
-		ctx = context.WithValue(
-			ctx,
-			model.BearerAuthKey,
-			claims,
-		)
-
-		c.SetRequest(
-			c.Request().WithContext(ctx),
-		)
+		c.Set("user_id", claims.UserID)
+		c.Set("role_id", claims.RoleID)
+		c.Set("email", claims.Email)
+		c.Set("full_name", claims.FullName)
 
 		return next(c)
 	}
