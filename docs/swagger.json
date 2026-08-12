@@ -1333,6 +1333,13 @@
                         "schema": {
                             "$ref": "#/definitions/model.ProductVariantUpdateInput"
                         }
+                    },
+                    {
+                        "type": "file",
+                        "description": "Product variant image",
+                        "name": "image",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1820,6 +1827,13 @@
                         "schema": {
                             "$ref": "#/definitions/model.ProductVariantInput"
                         }
+                    },
+                    {
+                        "type": "file",
+                        "description": "Product variant image",
+                        "name": "image",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -2592,6 +2606,12 @@
                 "id": {
                     "type": "string"
                 },
+                "image_public_id": {
+                    "type": "string"
+                },
+                "image_url": {
+                    "type": "string"
+                },
                 "is_active": {
                     "type": "boolean"
                 },
@@ -2621,6 +2641,7 @@
         "model.ProductVariantInput": {
             "type": "object",
             "required": [
+                "image_url",
                 "price",
                 "sku"
             ],
@@ -2632,6 +2653,9 @@
                 "color": {
                     "type": "string",
                     "maxLength": 100
+                },
+                "image_url": {
+                    "type": "string"
                 },
                 "is_active": {
                     "type": "boolean"
@@ -2656,8 +2680,8 @@
         "model.ProductVariantUpdateInput": {
             "type": "object",
             "required": [
+                "image_url",
                 "price",
-                "product_id",
                 "sku"
             ],
             "properties": {
@@ -2669,14 +2693,14 @@
                     "type": "string",
                     "maxLength": 100
                 },
+                "image_url": {
+                    "type": "string"
+                },
                 "is_active": {
                     "type": "boolean"
                 },
                 "price": {
                     "type": "number"
-                },
-                "product_id": {
-                    "type": "string"
                 },
                 "size": {
                     "type": "string",

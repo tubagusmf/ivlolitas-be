@@ -3,29 +3,32 @@ package usecase
 import (
 	"context"
 	"errors"
+	"mime/multipart"
 
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"github.com/tubagusmf/ivlolitas-be/internal/model"
 	"github.com/tubagusmf/ivlolitas-be/internal/repository"
+	"github.com/tubagusmf/ivlolitas-be/internal/storage"
 	"gorm.io/gorm"
 )
 
 type IProductVariantUsecase interface {
 	GetByID(ctx context.Context, id string) (*model.ProductVariant, error)
 	GetByProductID(ctx context.Context, productID string) ([]*model.ProductVariant, error)
-	Create(ctx context.Context, productID string, in *model.ProductVariantInput) (*model.ProductVariant, error)
-	Update(ctx context.Context, id string, in *model.ProductVariantUpdateInput) (*model.ProductVariant, error)
+	Create(ctx context.Context, productID string, in *model.ProductVariantInput, file *multipart.FileHeader) (*model.ProductVariant, error)
+	Update(ctx context.Context, id string, in *model.ProductVariantUpdateInput, file *multipart.FileHeader) (*model.ProductVariant, error)
 	Delete(ctx context.Context, id string) error
 }
 
 type productVariantUsecase struct {
 	repo        repository.IProductVariantRepository
 	productRepo repository.IProductRepository
+	storage     storage.Storage
 }
 
-func NewProductVariantUsecase(repo repository.IProductVariantRepository, productRepo repository.IProductRepository) IProductVariantUsecase {
-	return &productVariantUsecase{repo: repo, productRepo: productRepo}
+func NewProductVariantUsecase(repo repository.IProductVariantRepository, productRepo repository.IProductRepository, storage storage.Storage) IProductVariantUsecase {
+	return &productVariantUsecase{repo: repo, productRepo: productRepo, storage: storage}
 }
 
 func (p *productVariantUsecase) GetByID(ctx context.Context, id string) (*model.ProductVariant, error) {
@@ -52,7 +55,7 @@ func (p *productVariantUsecase) GetByProductID(ctx context.Context, productID st
 	return productVariant, nil
 }
 
-func (p *productVariantUsecase) Create(ctx context.Context, productID string, in *model.ProductVariantInput) (*model.ProductVariant, error) {
+func (p *productVariantUsecase) Create(ctx context.Context, productID string, in *model.ProductVariantInput, file *multipart.FileHeader) (*model.ProductVariant, error) {
 	log := logrus.WithFields(logrus.Fields{
 		"input": in,
 	})
@@ -74,20 +77,41 @@ func (p *productVariantUsecase) Create(ctx context.Context, productID string, in
 		return nil, err
 	}
 
+	src, err := file.Open()
+	if err != nil {
+		log.WithError(err).Error("Failed to open file")
+		return nil, err
+	}
+	defer src.Close()
+
+	uploadResult, err := p.storage.Upload(
+		ctx,
+		src,
+		"products/variants",
+	)
+	if err != nil {
+		log.WithError(err).Error("Failed to upload product variant image")
+		return nil, err
+	}
+
 	productVariant := &model.ProductVariant{
-		ID:        uuid.New().String(),
-		ProductID: productID,
-		SKU:       in.SKU,
-		Color:     in.Color,
-		Size:      in.Size,
-		Price:     in.Price,
-		Weight:    in.Weight,
-		Barcode:   in.Barcode,
-		IsActive:  in.IsActive,
+		ID:            uuid.New().String(),
+		ProductID:     productID,
+		SKU:           in.SKU,
+		Color:         in.Color,
+		Size:          in.Size,
+		Price:         in.Price,
+		Weight:        in.Weight,
+		Barcode:       in.Barcode,
+		IsActive:      in.IsActive,
+		ImageURL:      uploadResult.URL,
+		ImagePublicID: uploadResult.PublicID,
 	}
 
 	result, err := p.repo.Create(ctx, productVariant)
 	if err != nil {
+		_ = p.storage.Delete(ctx, uploadResult.PublicID)
+
 		log.WithError(err).Error("Failed to create product variant")
 		return nil, err
 	}
@@ -95,7 +119,7 @@ func (p *productVariantUsecase) Create(ctx context.Context, productID string, in
 	return result, nil
 }
 
-func (p *productVariantUsecase) Update(ctx context.Context, id string, in *model.ProductVariantUpdateInput) (*model.ProductVariant, error) {
+func (p *productVariantUsecase) Update(ctx context.Context, id string, in *model.ProductVariantUpdateInput, file *multipart.FileHeader) (*model.ProductVariant, error) {
 	log := logrus.WithFields(logrus.Fields{
 		"id":    id,
 		"input": in,
@@ -128,10 +152,49 @@ func (p *productVariantUsecase) Update(ctx context.Context, id string, in *model
 	productVariant.Barcode = in.Barcode
 	productVariant.IsActive = in.IsActive
 
+	var oldPublicID string
+	var newPublicID string
+
+	if file != nil {
+		oldPublicID = productVariant.ImagePublicID
+
+		src, err := file.Open()
+		if err != nil {
+			log.WithError(err).Error("Failed to open file")
+			return nil, err
+		}
+		defer src.Close()
+
+		uploadResult, err := p.storage.Upload(
+			ctx,
+			src,
+			"products/variants",
+		)
+		if err != nil {
+			log.WithError(err).Error("Failed to upload product variant image")
+			return nil, err
+		}
+
+		productVariant.ImageURL = uploadResult.URL
+		productVariant.ImagePublicID = uploadResult.PublicID
+
+		newPublicID = uploadResult.PublicID
+	}
+
 	result, err := p.repo.Update(ctx, productVariant)
 	if err != nil {
+		if newPublicID != "" {
+			_ = p.storage.Delete(ctx, newPublicID)
+		}
+
 		log.WithError(err).Error("Failed to update product variant")
 		return nil, err
+	}
+
+	if oldPublicID != "" {
+		if err := p.storage.Delete(ctx, oldPublicID); err != nil {
+			log.WithError(err).Warn("Failed to delete old product variant image")
+		}
 	}
 
 	return result, nil

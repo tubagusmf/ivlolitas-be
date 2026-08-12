@@ -7,19 +7,21 @@ import (
 )
 
 type ProductVariant struct {
-	ID        string         `json:"id"`
-	ProductID string         `json:"product_id"`
-	Product   *Product       `json:"product"`
-	SKU       string         `json:"sku"`
-	Color     *string        `json:"color"`
-	Size      *string        `json:"size"`
-	Price     float64        `json:"price"`
-	Weight    float64        `json:"weight"`
-	Barcode   *string        `json:"barcode"`
-	IsActive  bool           `json:"is_active"`
-	CreatedAt time.Time      `json:"created_at"`
-	UpdatedAt time.Time      `json:"updated_at"`
-	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
+	ID            string         `json:"id"`
+	ProductID     string         `json:"product_id"`
+	Product       *Product       `json:"product"`
+	SKU           string         `json:"sku"`
+	Color         *string        `json:"color"`
+	Size          *string        `json:"size"`
+	Price         float64        `json:"price"`
+	Weight        float64        `json:"weight"`
+	Barcode       *string        `json:"barcode"`
+	IsActive      bool           `json:"is_active"`
+	ImageURL      string         `json:"image_url"`
+	ImagePublicID string         `json:"image_public_id"`
+	CreatedAt     time.Time      `json:"created_at"`
+	UpdatedAt     time.Time      `json:"updated_at"`
+	DeletedAt     gorm.DeletedAt `gorm:"index" json:"-"`
 }
 
 type ProductVariantInput struct {
@@ -30,6 +32,7 @@ type ProductVariantInput struct {
 	Weight   float64 `json:"weight" validate:"gte=0"`
 	Barcode  *string `json:"barcode" validate:"max=100"`
 	IsActive bool    `json:"is_active"`
+	ImageURL string  `json:"image_url" validate:"required"`
 }
 
 type ProductVariantUpdateInput struct {
@@ -40,4 +43,5 @@ type ProductVariantUpdateInput struct {
 	Weight   float64 `json:"weight" validate:"gte=0"`
 	Barcode  *string `json:"barcode" validate:"max=100"`
 	IsActive bool    `json:"is_active"`
+	ImageURL string  `json:"image_url" validate:"required"`
 }

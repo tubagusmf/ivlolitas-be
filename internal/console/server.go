@@ -81,7 +81,7 @@ func httpServer(cmd *cobra.Command, args []string) {
 	categoryUsecase := usecase.NewCategoryUsecase(categoryRepo)
 	productUsecase := usecase.NewProductUsecase(productRepo, categoryRepo)
 	productImageUsecase := usecase.NewProductImageUsecase(productRepo, productImageRepo, cloudStorage)
-	productVariantUsecase := usecase.NewProductVariantUsecase(productVariantRepo, productRepo)
+	productVariantUsecase := usecase.NewProductVariantUsecase(productVariantRepo, productRepo, cloudStorage)
 	inventoryUsecase := usecase.NewInventoryUsecase(inventoryRepo, inventoryTransactionRepo, postgresDB)
 
 	authMiddleware := handlerHttp.NewAuthMiddleware(jwt)

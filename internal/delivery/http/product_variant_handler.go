@@ -37,6 +37,7 @@ func NewProductVariantHandler(e *echo.Echo, uc usecase.IProductVariantUsecase, a
 // @Produce json
 // @Param productId path string true "Product UUID"
 // @Param request body model.ProductVariantInput true "Product variant input"
+// @Param image formData file true "Product variant image"
 // @Success 201 {object} model.ProductVariant
 // @Failure 400 {object} map[string]interface{}
 // @Failure 404 {object} map[string]interface{}
@@ -65,10 +66,18 @@ func (h *productVariantHandler) CreateProductVariant(c echo.Context) error {
 		})
 	}
 
+	file, err := c.FormFile("image")
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "image is required",
+		})
+	}
+
 	productVariant, err := h.productVariantUsecase.Create(
 		c.Request().Context(),
 		productID,
 		&body,
+		file,
 	)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]interface{}{
@@ -154,17 +163,18 @@ func (h *productVariantHandler) GetProductVariantByID(c echo.Context) error {
 // @Produce json
 // @Param id path string true "Product variant UUID"
 // @Param request body model.ProductVariantUpdateInput true "Product variant update input"
+// @Param image formData file true "Product variant image"
 // @Success 200 {object} map[string]interface{}
 // @Failure 400 {object} map[string]interface{}
 // @Failure 404 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
 // @Router /products/variants/{id} [put]
 func (h *productVariantHandler) UpdateProductVariant(c echo.Context) error {
-	id := c.Param("variantId")
+	productID := c.Param("productId")
 
-	if id == "" {
+	if _, err := uuid.Parse(productID); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]interface{}{
-			"message": "invalid product variant id",
+			"message": "invalid product id",
 		})
 	}
 
@@ -182,11 +192,20 @@ func (h *productVariantHandler) UpdateProductVariant(c echo.Context) error {
 		})
 	}
 
+	file, err := c.FormFile("image")
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "image is required",
+		})
+	}
+
 	productVariant, err := h.productVariantUsecase.Update(
 		c.Request().Context(),
-		id,
+		c.Param("variantId"),
 		&body,
+		file,
 	)
+
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]interface{}{
 			"message": err.Error(),

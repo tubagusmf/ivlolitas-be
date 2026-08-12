@@ -1340,6 +1340,13 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/model.ProductVariantUpdateInput"
                         }
+                    },
+                    {
+                        "type": "file",
+                        "description": "Product variant image",
+                        "name": "image",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1827,6 +1834,13 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/model.ProductVariantInput"
                         }
+                    },
+                    {
+                        "type": "file",
+                        "description": "Product variant image",
+                        "name": "image",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -2599,6 +2613,12 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
+                "image_public_id": {
+                    "type": "string"
+                },
+                "image_url": {
+                    "type": "string"
+                },
                 "is_active": {
                     "type": "boolean"
                 },
@@ -2628,6 +2648,7 @@ const docTemplate = `{
         "model.ProductVariantInput": {
             "type": "object",
             "required": [
+                "image_url",
                 "price",
                 "sku"
             ],
@@ -2639,6 +2660,9 @@ const docTemplate = `{
                 "color": {
                     "type": "string",
                     "maxLength": 100
+                },
+                "image_url": {
+                    "type": "string"
                 },
                 "is_active": {
                     "type": "boolean"
@@ -2663,8 +2687,8 @@ const docTemplate = `{
         "model.ProductVariantUpdateInput": {
             "type": "object",
             "required": [
+                "image_url",
                 "price",
-                "product_id",
                 "sku"
             ],
             "properties": {
@@ -2676,14 +2700,14 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 100
                 },
+                "image_url": {
+                    "type": "string"
+                },
                 "is_active": {
                     "type": "boolean"
                 },
                 "price": {
                     "type": "number"
-                },
-                "product_id": {
-                    "type": "string"
                 },
                 "size": {
                     "type": "string",

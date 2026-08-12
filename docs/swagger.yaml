@@ -187,6 +187,10 @@ definitions:
         type: string
       id:
         type: string
+      image_public_id:
+        type: string
+      image_url:
+        type: string
       is_active:
         type: boolean
       price:
@@ -212,6 +216,8 @@ definitions:
       color:
         maxLength: 100
         type: string
+      image_url:
+        type: string
       is_active:
         type: boolean
       price:
@@ -226,6 +232,7 @@ definitions:
         minimum: 0
         type: number
     required:
+    - image_url
     - price
     - sku
     type: object
@@ -237,12 +244,12 @@ definitions:
       color:
         maxLength: 100
         type: string
+      image_url:
+        type: string
       is_active:
         type: boolean
       price:
         type: number
-      product_id:
-        type: string
       size:
         maxLength: 50
         type: string
@@ -253,8 +260,8 @@ definitions:
         minimum: 0
         type: number
     required:
+    - image_url
     - price
-    - product_id
     - sku
     type: object
   model.RefreshTokenRequest:
@@ -1298,6 +1305,11 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/model.ProductVariantInput'
+      - description: Product variant image
+        in: formData
+        name: image
+        required: true
+        type: file
       produces:
       - application/json
       responses:
@@ -1498,6 +1510,11 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/model.ProductVariantUpdateInput'
+      - description: Product variant image
+        in: formData
+        name: image
+        required: true
+        type: file
       produces:
       - application/json
       responses:
