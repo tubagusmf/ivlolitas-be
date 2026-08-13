@@ -208,62 +208,6 @@ definitions:
       weight:
         type: number
     type: object
-  model.ProductVariantInput:
-    properties:
-      barcode:
-        maxLength: 100
-        type: string
-      color:
-        maxLength: 100
-        type: string
-      image_url:
-        type: string
-      is_active:
-        type: boolean
-      price:
-        type: number
-      size:
-        maxLength: 50
-        type: string
-      sku:
-        maxLength: 50
-        type: string
-      weight:
-        minimum: 0
-        type: number
-    required:
-    - image_url
-    - price
-    - sku
-    type: object
-  model.ProductVariantUpdateInput:
-    properties:
-      barcode:
-        maxLength: 100
-        type: string
-      color:
-        maxLength: 100
-        type: string
-      image_url:
-        type: string
-      is_active:
-        type: boolean
-      price:
-        type: number
-      size:
-        maxLength: 50
-        type: string
-      sku:
-        maxLength: 50
-        type: string
-      weight:
-        minimum: 0
-        type: number
-    required:
-    - image_url
-    - price
-    - sku
-    type: object
   model.RefreshTokenRequest:
     properties:
       refresh_token:
@@ -1291,20 +1235,44 @@ paths:
       - Product Variants
     post:
       consumes:
-      - application/json
-      description: Create a new product variant
+      - multipart/form-data
+      description: Create a new product variant with image
       parameters:
       - description: Product UUID
         in: path
         name: productId
         required: true
         type: string
-      - description: Product variant input
-        in: body
-        name: request
+      - description: SKU
+        in: formData
+        name: sku
         required: true
-        schema:
-          $ref: '#/definitions/model.ProductVariantInput'
+        type: string
+      - description: Color
+        in: formData
+        name: color
+        type: string
+      - description: Size
+        in: formData
+        name: size
+        type: string
+      - description: Price
+        in: formData
+        name: price
+        required: true
+        type: number
+      - description: Weight
+        in: formData
+        name: weight
+        type: number
+      - description: Barcode
+        in: formData
+        name: barcode
+        type: string
+      - description: Is Active
+        in: formData
+        name: is_active
+        type: boolean
       - description: Product variant image
         in: formData
         name: image
@@ -1494,26 +1462,50 @@ paths:
       summary: Get a product variant by ID
       tags:
       - Product Variants
+  /products/variants/{variantId}:
     put:
       consumes:
-      - application/json
+      - multipart/form-data
       description: Update a product variant by ID
       parameters:
       - description: Product variant UUID
         in: path
-        name: id
+        name: variantId
         required: true
         type: string
-      - description: Product variant update input
-        in: body
-        name: request
+      - description: SKU
+        in: formData
+        name: sku
         required: true
-        schema:
-          $ref: '#/definitions/model.ProductVariantUpdateInput'
+        type: string
+      - description: Color
+        in: formData
+        name: color
+        type: string
+      - description: Size
+        in: formData
+        name: size
+        type: string
+      - description: Price
+        in: formData
+        name: price
+        required: true
+        type: number
+      - description: Weight
+        in: formData
+        name: weight
+        type: number
+      - description: Barcode
+        in: formData
+        name: barcode
+        type: string
+      - description: Is Active
+        in: formData
+        name: is_active
+        type: boolean
       - description: Product variant image
         in: formData
         name: image
-        required: true
         type: file
       produces:
       - application/json

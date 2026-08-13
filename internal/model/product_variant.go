@@ -25,23 +25,21 @@ type ProductVariant struct {
 }
 
 type ProductVariantInput struct {
-	SKU      string  `json:"sku" validate:"required,max=50"`
-	Color    *string `json:"color" validate:"max=100"`
-	Size     *string `json:"size" validate:"max=50"`
-	Price    float64 `json:"price" validate:"required,gt=0"`
-	Weight   float64 `json:"weight" validate:"gte=0"`
-	Barcode  *string `json:"barcode" validate:"max=100"`
-	IsActive bool    `json:"is_active"`
-	ImageURL string  `json:"image_url" validate:"required"`
+	SKU      string  `json:"sku" form:"sku" validate:"required,max=50"`
+	Color    *string `json:"color" form:"color" validate:"omitempty,max=100"`
+	Size     *string `json:"size" form:"size" validate:"omitempty,max=50"`
+	Price    float64 `json:"price" form:"price" validate:"required,gt=0"`
+	Weight   float64 `json:"weight" form:"weight" validate:"gte=0"`
+	Barcode  *string `json:"barcode" form:"barcode" validate:"omitempty,max=100"`
+	IsActive bool    `json:"is_active" form:"is_active"`
 }
 
 type ProductVariantUpdateInput struct {
-	SKU      string  `json:"sku" validate:"required,max=50"`
-	Color    *string `json:"color" validate:"max=100"`
-	Size     *string `json:"size" validate:"max=50"`
-	Price    float64 `json:"price" validate:"required,gt=0"`
-	Weight   float64 `json:"weight" validate:"gte=0"`
-	Barcode  *string `json:"barcode" validate:"max=100"`
-	IsActive bool    `json:"is_active"`
-	ImageURL string  `json:"image_url" validate:"required"`
+	SKU      string  `json:"sku" form:"sku" validate:"required,max=50"`
+	Color    *string `json:"color" form:"color" validate:"omitempty,max=100"`
+	Size     *string `json:"size" form:"size" validate:"omitempty,max=50"`
+	Price    float64 `json:"price" form:"price" validate:"required,gt=0"`
+	Weight   float64 `json:"weight" form:"weight" validate:"gte=0"`
+	Barcode  *string `json:"barcode" form:"barcode" validate:"omitempty,max=100"`
+	IsActive bool    `json:"is_active" form:"is_active"`
 }

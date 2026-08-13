@@ -1,6 +1,8 @@
 package http
 
 import (
+	"errors"
+	"mime/multipart"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -30,13 +32,19 @@ func NewProductVariantHandler(e *echo.Echo, uc usecase.IProductVariantUsecase, a
 // CreateProductVariant
 //
 // @Summary Create a new product variant
-// @Description Create a new product variant
+// @Description Create a new product variant with image
 // @Tags Product Variants
 // @Security BearerAuth
-// @Accept json
+// @Accept multipart/form-data
 // @Produce json
 // @Param productId path string true "Product UUID"
-// @Param request body model.ProductVariantInput true "Product variant input"
+// @Param sku formData string true "SKU"
+// @Param color formData string false "Color"
+// @Param size formData string false "Size"
+// @Param price formData number true "Price"
+// @Param weight formData number false "Weight"
+// @Param barcode formData string false "Barcode"
+// @Param is_active formData boolean false "Is Active"
 // @Param image formData file true "Product variant image"
 // @Success 201 {object} model.ProductVariant
 // @Failure 400 {object} map[string]interface{}
@@ -159,25 +167,23 @@ func (h *productVariantHandler) GetProductVariantByID(c echo.Context) error {
 // @Description Update a product variant by ID
 // @Tags Product Variants
 // @Security BearerAuth
-// @Accept json
+// @Accept multipart/form-data
 // @Produce json
-// @Param id path string true "Product variant UUID"
-// @Param request body model.ProductVariantUpdateInput true "Product variant update input"
-// @Param image formData file true "Product variant image"
+// @Param variantId path string true "Product variant UUID"
+// @Param sku formData string true "SKU"
+// @Param color formData string false "Color"
+// @Param size formData string false "Size"
+// @Param price formData number true "Price"
+// @Param weight formData number false "Weight"
+// @Param barcode formData string false "Barcode"
+// @Param is_active formData boolean false "Is Active"
+// @Param image formData file false "Product variant image"
 // @Success 200 {object} map[string]interface{}
 // @Failure 400 {object} map[string]interface{}
 // @Failure 404 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
-// @Router /products/variants/{id} [put]
+// @Router /products/variants/{variantId} [put]
 func (h *productVariantHandler) UpdateProductVariant(c echo.Context) error {
-	productID := c.Param("productId")
-
-	if _, err := uuid.Parse(productID); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]interface{}{
-			"message": "invalid product id",
-		})
-	}
-
 	var body model.ProductVariantUpdateInput
 
 	if err := c.Bind(&body); err != nil {
@@ -192,10 +198,12 @@ func (h *productVariantHandler) UpdateProductVariant(c echo.Context) error {
 		})
 	}
 
+	var file *multipart.FileHeader
+
 	file, err := c.FormFile("image")
-	if err != nil {
+	if err != nil && !errors.Is(err, http.ErrMissingFile) {
 		return c.JSON(http.StatusBadRequest, map[string]interface{}{
-			"message": "image is required",
+			"message": "invalid image file",
 		})
 	}
 

@@ -1307,45 +1307,26 @@ const docTemplate = `{
                     }
                 }
             },
-            "put": {
+            "delete": {
                 "security": [
                     {
                         "BearerAuth": []
                     }
                 ],
-                "description": "Update a product variant by ID",
-                "consumes": [
-                    "application/json"
-                ],
+                "description": "Delete a product variant by ID",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Product Variants"
                 ],
-                "summary": "Update a product variant by ID",
+                "summary": "Delete a product variant by ID",
                 "parameters": [
                     {
                         "type": "string",
                         "description": "Product variant UUID",
                         "name": "id",
                         "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Product variant update input",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.ProductVariantUpdateInput"
-                        }
-                    },
-                    {
-                        "type": "file",
-                        "description": "Product variant image",
-                        "name": "image",
-                        "in": "formData",
                         "required": true
                     }
                 ],
@@ -1379,28 +1360,83 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
-            "delete": {
+            }
+        },
+        "/products/variants/{variantId}": {
+            "put": {
                 "security": [
                     {
                         "BearerAuth": []
                     }
                 ],
-                "description": "Delete a product variant by ID",
+                "description": "Update a product variant by ID",
+                "consumes": [
+                    "multipart/form-data"
+                ],
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Product Variants"
                 ],
-                "summary": "Delete a product variant by ID",
+                "summary": "Update a product variant by ID",
                 "parameters": [
                     {
                         "type": "string",
                         "description": "Product variant UUID",
-                        "name": "id",
+                        "name": "variantId",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "SKU",
+                        "name": "sku",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Color",
+                        "name": "color",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Size",
+                        "name": "size",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "number",
+                        "description": "Price",
+                        "name": "price",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "number",
+                        "description": "Weight",
+                        "name": "weight",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Barcode",
+                        "name": "barcode",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Is Active",
+                        "name": "is_active",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "file",
+                        "description": "Product variant image",
+                        "name": "image",
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -1807,9 +1843,9 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Create a new product variant",
+                "description": "Create a new product variant with image",
                 "consumes": [
-                    "application/json"
+                    "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
@@ -1827,13 +1863,48 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "Product variant input",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.ProductVariantInput"
-                        }
+                        "type": "string",
+                        "description": "SKU",
+                        "name": "sku",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Color",
+                        "name": "color",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Size",
+                        "name": "size",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "number",
+                        "description": "Price",
+                        "name": "price",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "number",
+                        "description": "Weight",
+                        "name": "weight",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Barcode",
+                        "name": "barcode",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Is Active",
+                        "name": "is_active",
+                        "in": "formData"
                     },
                     {
                         "type": "file",
@@ -2642,84 +2713,6 @@ const docTemplate = `{
                 },
                 "weight": {
                     "type": "number"
-                }
-            }
-        },
-        "model.ProductVariantInput": {
-            "type": "object",
-            "required": [
-                "image_url",
-                "price",
-                "sku"
-            ],
-            "properties": {
-                "barcode": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "color": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "image_url": {
-                    "type": "string"
-                },
-                "is_active": {
-                    "type": "boolean"
-                },
-                "price": {
-                    "type": "number"
-                },
-                "size": {
-                    "type": "string",
-                    "maxLength": 50
-                },
-                "sku": {
-                    "type": "string",
-                    "maxLength": 50
-                },
-                "weight": {
-                    "type": "number",
-                    "minimum": 0
-                }
-            }
-        },
-        "model.ProductVariantUpdateInput": {
-            "type": "object",
-            "required": [
-                "image_url",
-                "price",
-                "sku"
-            ],
-            "properties": {
-                "barcode": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "color": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "image_url": {
-                    "type": "string"
-                },
-                "is_active": {
-                    "type": "boolean"
-                },
-                "price": {
-                    "type": "number"
-                },
-                "size": {
-                    "type": "string",
-                    "maxLength": 50
-                },
-                "sku": {
-                    "type": "string",
-                    "maxLength": 50
-                },
-                "weight": {
-                    "type": "number",
-                    "minimum": 0
                 }
             }
         },
